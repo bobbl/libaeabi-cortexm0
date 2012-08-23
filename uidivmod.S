@@ -1,6 +1,6 @@
 /* This is the ISC license (similar to the MIT/Expat license)
  *
- * Copyright (c) 2011 Jörg Mische <bobbl@gmx.de>
+ * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
