@@ -1,0 +1,2 @@
+libaeabi-cortexm0
+=================
