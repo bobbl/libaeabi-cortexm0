@@ -53,40 +53,42 @@ __aeabi_uldivmod:
 	push	{r4, r5, r6, r7, lr}
 
 	// shift left the denominator until it is greater than the numerator
+	// denom(r7:r6) = r3:r2 << 32
 
-	mov	r3, r2		// shift denom by 32
-	mov	r2, #0
 	movs	r5, #1		// bitmask
-	adds	r3, #0		// dont shift if denominator would overflow
+	mov	r6, #0
+	adds	r7, r2, #0	// dont shift if denominator would overflow
 	bmi	L_upper_result
-	cmp	r1, r3
+	cmp	r1, r7
 	blo	L_upper_result
 	
 L_denom_shift_loop1:
 	lsls	r5, #1
-	lsls	r3, #1
+	lsls	r7, #1
 	bmi	L_upper_result	// dont shift if overflow
-	cmp	r1, r3
+	cmp	r1, r7
 	bhs	L_denom_shift_loop1
 	
 L_upper_result:
-	movs	r7, #0		// upper result = 0
+	mov	r3, r1
+	mov	r2, r0
+	movs	r1, #0		// upper result = 0
 
 L_sub_loop1:	
 	mov	r4, r0
-	cmp	r1, r3
-	sbcs	r4, r2
+	cmp	r3, r7
+	sbcs	r4, r6
 	bcc	L_dont_sub1	// if (num>denom)
 
-	subs	r1, r3		// num -= denom
-	sbcs	r0, r2
-	orrs	r7, r5		// result(r7:r6) |= bitmask(r5)
+	subs	r3, r7		// num -= denom
+	sbcs	r2, r6
+	orrs	r1, r5		// result(r7:r6) |= bitmask(r5)
 L_dont_sub1:
 
-	lsls	r4, r3, #31	// denom(r3:r2) >>= 1
-	lsrs	r2, #1
-	lsrs	r3, #1
-	orrs	r2, r4
+	lsls	r4, r7, #31	// denom(r3:r2) >>= 1
+	lsrs	r6, #1
+	lsrs	r7, #1
+	orrs	r6, r4
 	lsrs	r5, #1		// bitmask(r5) >>= 1
 	bne	L_sub_loop1
 	
@@ -124,52 +126,51 @@ L_fallback_32bits:
 L_large_denom:
 	push	{r4, r5, r6, r7, lr}
 
+	mov	r7, r3
+	mov	r6, r2
+	mov	r3, r1
+	mov	r2, r0
 
 	// Shift left the denominator until it is greater than the numerator
 
-	mov	r7, #0		// high word of result is 0
+	movs	r1, #0		// high word of result is 0
 	movs	r5, #1		// bitmask
-	adds	r3, #0		// dont shift if denominator would overflow
+	adds	r7, #0		// dont shift if denominator would overflow
 	bmi	L_lower_result
-	cmp	r1, r3
+	cmp	r3, r7
 	blo	L_lower_result
 	
 L_denom_shift_loop4:
 	lsls	r5, #1
-	lsls	r3, #1
-	lsls	r2, #1
-	adcs	r3, r7		// r7=0
+	lsls	r7, #1
+	lsls	r6, #1
+	adcs	r7, r1		// r1=0
 	bmi	L_lower_result	// dont shift if overflow
-	cmp	r1, r3
+	cmp	r3, r7
 	bhs	L_denom_shift_loop4
-	
+
 
 
 L_lower_result:
-	movs	r6, #0
+	movs	r0, #0
 	
 L_sub_loop4:
 	mov	r4, r0
-	cmp	r1, r3
-	sbcs	r4, r2
+	cmp	r3, r7
+	sbcs	r4, r6
 	bcc	L_dont_sub4	// if (num>denom)
 
-	subs	r1, r3		// numerator -= denom
-	sbcs	r0, r2
-	orrs	r6, r5		// result(r7:r6) |= bitmask(r5)
+	subs	r3, r7		// numerator -= denom
+	sbcs	r2, r6
+	orrs	r0, r5		// result(r1:r0) |= bitmask(r5)
 L_dont_sub4:
 
-	lsls	r6, r3, #31	// denom(r3:r2) >>= 1
-	lsrs	r2, #1
-	lsrs	r3, #1
-	orrs	r2, r6
+	lsls	r4, r7, #31	// denom(r7:r6) >>= 1
+	lsrs	r6, #1
+	lsrs	r7, #1
+	orrs	r6, r4
 	lsrs	r5, #1		// bitmask(r5) >>= 1
 	bne	L_sub_loop4
-
-	mov	r3, r1		// remainder(r3:r2) = numerator(r1:r0)
-	mov	r2, r0
-	mov	r1, r7		// quotient(r1:r0) = result(r7:r6)
-	mov	r0, r6
 
 	pop	{r4, r5, r6, r7, pc}
 
