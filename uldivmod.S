@@ -48,7 +48,12 @@ __aeabi_uldivmod:
 
 
 	// case 1: num >= 2^32 and denom < 2^32
-	// result might be > 2^32
+	// Result might be > 2^32, therefore we first calculate the upper 32
+	// bits of the result. It is done similar to the calculation of the
+	// lower 32 bits, but with a denominator that is shifted by 32.
+	// Hence the lower 32 bits of the denominator are always 0 and the
+	// costly 64 bit shift and sub operations can be replaced by cheap 32
+	// bit operations.
 
 	push	{r4, r5, r6, r7, lr}
 
@@ -56,7 +61,6 @@ __aeabi_uldivmod:
 	// denom(r7:r6) = r3:r2 << 32
 
 	movs	r5, #1		// bitmask
-	mov	r6, #0
 	adds	r7, r2, #0	// dont shift if denominator would overflow
 	bmi	L_upper_result
 	cmp	r1, r7
@@ -75,25 +79,20 @@ L_upper_result:
 	movs	r1, #0		// upper result = 0
 
 L_sub_loop1:	
-	mov	r4, r0
 	cmp	r3, r7
-	sbcs	r4, r6
 	bcc	L_dont_sub1	// if (num>denom)
 
 	subs	r3, r7		// num -= denom
-	sbcs	r2, r6
 	orrs	r1, r5		// result(r7:r6) |= bitmask(r5)
 L_dont_sub1:
 
-	lsls	r4, r7, #31	// denom(r3:r2) >>= 1
-	lsrs	r6, #1
-	lsrs	r7, #1
-	orrs	r6, r4
+	lsrs	r7, #1		// denom(r7:r6) >>= 1
 	lsrs	r5, #1		// bitmask(r5) >>= 1
 	bne	L_sub_loop1
 	
 	movs	r5, #1
 	lsls	r5, #31
+	mov	r6, #0
 	b	L_lower_result
 
 
@@ -155,13 +154,13 @@ L_lower_result:
 	movs	r0, #0
 	
 L_sub_loop4:
-	mov	r4, r0
-	cmp	r3, r7
-	sbcs	r4, r6
+	mov	r4, r3
+	cmp	r2, r6
+	sbcs	r4, r7
 	bcc	L_dont_sub4	// if (num>denom)
 
-	subs	r3, r7		// numerator -= denom
-	sbcs	r2, r6
+	subs	r2, r6		// numerator -= denom
+	sbcs	r3, r7
 	orrs	r0, r5		// result(r1:r0) |= bitmask(r5)
 L_dont_sub4:
 
