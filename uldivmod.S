@@ -28,6 +28,34 @@
 
 
 
+
+@ libgcc wrapper functions
+@ Ironically they are not needed for gcc, which uses the aeabi functions,
+@ but for LLVM
+
+
+@ unsigned long long __umoddi3(unsigned long long num, unsigned long long denom)
+	.thumb_func
+        .global __umoddi3
+__umoddi3:
+	push	{lr}
+	bl	__aeabi_uldivmod
+	mov	r0, r2
+	mov	r1, r3
+	pop	{pc}
+
+
+@ unsigned long long __udivdi3(unsigned long long num, unsigned long long denom)
+@ just an alias for __aeabi_uldivmod(), the remainder is ignored
+	.thumb_func
+        .global __udivdi3
+__udivdi3:
+
+
+
+
+
+
 @ __aeabi_uldivmod()
 @
 @ Input:  r1:r0 = numerator
@@ -175,5 +203,5 @@ L_dont_sub4:
 	pop	{r4, r5, r6, r7, pc}
 
 
-
+    
 
