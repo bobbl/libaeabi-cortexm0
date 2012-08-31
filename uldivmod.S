@@ -1,4 +1,5 @@
-/* This is the ISC license (similar to the MIT/Expat license)
+/* Runtime ABI for the ARM Cortex-M0  
+ * uldivmod.S: unsigned 64 bit division
  *
  * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
@@ -15,9 +16,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* Runtime ABI for the ARM Cortex-M0  
- * uldivmod.S: unsigned 64 bit division
- */
 
 
 
@@ -34,7 +32,10 @@
 @ but for LLVM
 
 
+
+
 @ unsigned long long __umoddi3(unsigned long long num, unsigned long long denom)
+@
 	.thumb_func
         .global __umoddi3
 __umoddi3:
@@ -45,12 +46,26 @@ __umoddi3:
 	pop	{pc}
 
 
+
+
 @ unsigned long long __udivdi3(unsigned long long num, unsigned long long denom)
+@
 @ just an alias for __aeabi_uldivmod(), the remainder is ignored
+@
 	.thumb_func
         .global __udivdi3
 __udivdi3:
 
+
+
+
+@ unsigned long long __aeabi_uldiv(unsigned long long num, unsigned long long denom)
+@
+@ just an alias for __aeabi_uldivmod(), the remainder is ignored
+@
+	.thumb_func
+        .global __aeabi_uldiv
+__aeabi_uldiv:
 
 
 
@@ -201,7 +216,3 @@ L_dont_sub4:
 	bne	L_sub_loop4
 
 	pop	{r4, r5, r6, r7, pc}
-
-
-    
-

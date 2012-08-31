@@ -1,4 +1,5 @@
-/* This is the ISC license (similar to the MIT/Expat license)
+/* Runtime ABI for the ARM Cortex-M0  
+ * uidivmod.S: unsigned 32 bit division
  *
  * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
@@ -15,16 +16,55 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* Runtime ABI for the ARM Cortex-M0  
- * uidivmod.S: unsigned 32 bit division
- */
-
 
 
 	.syntax unified
 	.text
 	.thumb
 	.cpu cortex-m0
+
+
+
+
+@ libgcc wrapper functions
+@ Ironically they are not needed for gcc, which uses the aeabi functions,
+@ but for LLVM
+
+
+
+
+@ unsigned __umodsi3(unsigned num, unsigned denom)
+@
+	.thumb_func
+        .global __umodsi3
+__umodsi3:
+	push	{lr}
+	bl	__aeabi_uidivmod
+	mov	r0, r1
+	pop	{pc}
+
+
+
+
+@ unsigned  __udivsi3(unsigned num, unsigned denom)
+@
+@ just an alias for __aeabi_uldivmod(), the remainder is ignored
+@
+	.thumb_func
+        .global __udivsi3
+__udivsi3:
+
+
+
+
+@ unsigned __aeabi_uidiv(unsigned num, unsigned denom)
+@
+@ just an alias for __aeabi_uidivmod(), the remainder is ignored
+@
+	.thumb_func
+        .global __aeabi_uidiv
+__aeabi_uidiv:
+
 
 
 
