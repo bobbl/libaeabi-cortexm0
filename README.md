@@ -8,9 +8,26 @@ subset of the Cortex-M0.
 So Far Implemented
 ------------------
 
+~~~~
+__aeabi_lmul()
+__aeabi_uidiv()
 __aeabi_uidivmod()
-
 __aeabi_uldivmod()
+~~~~
+
+Additional libgcc wrapper functions
+-----------------------------------
+Ironically they are not needed for gcc, which uses the aeabi functions, but for
+LLVM.
+
+~~~~
+__muldi3()
+__umodsi3():
+__udivsi3():
+__umoddi3():
+__udivdi3():
+~~~~
+
 
 License
 -------
