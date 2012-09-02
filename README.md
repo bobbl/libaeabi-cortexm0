@@ -11,6 +11,7 @@ So Far Implemented
 
 ~~~~
 __aeabi_lmul()
+__aeabi_ldivmod()
 __aeabi_uldivmod()
 __aeabi_llsl()
 __aeabi_llsr()
@@ -29,6 +30,8 @@ LLVM.
 
 ~~~~
 __muldi3()
+__moddi3()
+__divdi3()
 __umoddi3()
 __udivdi3()
 __ashldi3()

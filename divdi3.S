@@ -1,5 +1,5 @@
 /* Runtime ABI for the ARM Cortex-M0  
- * idiv.S: signed 32 bit division (only quotient)
+ * ldivmod.S: signed 64 bit division (quotient and remainder)
  *
  * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
@@ -25,44 +25,48 @@
 
 
 
-@ int __divsi3(int num, int denom)
+@ long long __divdi3(long long numerator, long long denominator)
 @
-@ libgcc wrapper: just an alias for __aeabi_idivmod(), the remainder is ignored
-@
-	.thumb_func
-        .global __divsi3
-__divsi3:
-
-
-
-@ int __aeabi_idiv(int num:r0, int denom:r1)
-@
-@ Divide r0 by r0 and return quotient in r0 (all signed).
-@ Use __aeabi_uidivmod() but check signs before and change signs afterwards.
+@ Divide r1:r0 by r3:r2 and return the quotient in r1:r0.
+@ Same as _aeabi_ldivmod(), but ignore remainder.
 @
 	.thumb_func
-        .global __aeabi_idiv
-__aeabi_idiv:
-
-	cmp	r0, #0
-	bge	L_num_pos
-	
-	rsbs	r0, r0, #0		@ num = -num
+        .global __divdi3
+__divdi3:
 
 	cmp	r1, #0
+	bge	L_num_pos
+	
+	push	{r4, lr}
+	mov	r4, #0			@ num = -num
+	rsbs	r0, r0, #0
+	sbcs	r4, r1
+	mov	r1, r4
+
+	cmp	r3, #0
 	bge	L_neg_result
 	
-	rsbs	r1, r1, #0		@ den = -den
-	b	__aeabi_uidivmod
+	mov	r4, #0			@ den = -den
+	rsbs	r2, r2, #0
+	sbcs	r4, r3
+	mov	r3, r4
+	bl	__aeabi_uldivmod
+	pop	{r4, pc}
 	
 L_num_pos:
 	cmp	r1, #0
 	bge	__aeabi_uidivmod
 
-	rsbs	r1, r1, #0		@ den = -den
+	push	{r4, lr}
+	mov	r4, #0			@ den = -den
+	rsbs	r2, r2, #0
+	sbcs	r4, r3
+	mov	r3, r4
 
 L_neg_result:
-	push	{lr}
 	bl	__aeabi_uidivmod
-	rsbs	r0, r0, #0		@ quot = -quot
-	pop	{pc}
+	mov	r4, #0			@ quot = -quot
+	rsbs	r0, r0, #0
+	sbcs	r4, r1
+	mov	r1, r4
+	pop	{r4, pc}

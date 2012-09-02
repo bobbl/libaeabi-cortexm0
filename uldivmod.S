@@ -35,11 +35,11 @@ __udivdi3:
 
 
 
-@ {unsigned quotient[r1:r0], unsigned remainder[r3:r2]}
-@  __aeabi_uldivmod(unsigned numerator[r1:r0], unsigned denominator[r3:r2])
+@ {unsigned long long quotient, unsigned long long remainder}
+@ __aeabi_uldivmod(unsigned long long numerator, unsigned long long denominator)
 @
 @ Divide r1:r0 by r3:r2 and return the quotient in r1:r0 and the remainder
-@ in r3:r2
+@ in r3:r2 (all unsigned)
 @
 	.thumb_func
         .global __aeabi_uldivmod
