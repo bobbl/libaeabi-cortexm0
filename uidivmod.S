@@ -12,8 +12,8 @@
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+ * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 
@@ -25,30 +25,9 @@
 
 
 
-
-@ libgcc wrapper functions
-@ Ironically they are not needed for gcc, which uses the aeabi functions,
-@ but for LLVM
-
-
-
-
-@ unsigned __umodsi3(unsigned num, unsigned denom)
-@
-	.thumb_func
-        .global __umodsi3
-__umodsi3:
-	push	{lr}
-	bl	__aeabi_uidivmod
-	mov	r0, r1
-	pop	{pc}
-
-
-
-
 @ unsigned  __udivsi3(unsigned num, unsigned denom)
 @
-@ just an alias for __aeabi_uldivmod(), the remainder is ignored
+@ Just an alias for __aeabi_uldivmod(), the remainder is ignored
 @
 	.thumb_func
         .global __udivsi3
@@ -56,10 +35,9 @@ __udivsi3:
 
 
 
-
 @ unsigned __aeabi_uidiv(unsigned num, unsigned denom)
 @
-@ just an alias for __aeabi_uidivmod(), the remainder is ignored
+@ Just an alias for __aeabi_uidivmod(), the remainder is ignored
 @
 	.thumb_func
         .global __aeabi_uidiv
@@ -67,13 +45,10 @@ __aeabi_uidiv:
 
 
 
-
-@ __aeabi_uidivmod()
+@ {unsigned quotient:r0, unsigned remainder:r1}
+@  __aeabi_uidivmod(unsigned numerator:r0, unsigned denominator:r1)
 @
-@ Input:  r0 = numerator
-@         r1 = denominator
-@ Output: r0 = quotient
-@         r1 = remainder
+@ Divide r0 by r1 and return the quotient in r0 and the remainder in r1
 @
 	.thumb_func
         .global __aeabi_uidivmod

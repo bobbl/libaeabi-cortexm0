@@ -1,5 +1,5 @@
 /* Runtime ABI for the ARM Cortex-M0  
- * lmul.S: 64 bit multiplication
+ * umodsi3.S: wrapper for unsigned 32 bit division remainder
  *
  * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
@@ -25,35 +25,14 @@
 
 
 
-@ long long __muldi3(long long, long long)
+@ unsigned __umodsi3(unsigned num, unsigned denom)
 @
-@ libgcc wrapper: just an alias for __aeabi_lmul()
-@
-	.thumb_func
-        .global __muldi3
-__muldi3:
-
-
-
-@ long long __aeabi_lmul(long long r1:r0, long long r3:r2)
-@
-@ Multiply r1:r0 and r3:r2 and return the product in r1:r0
-@ Can also be used for unsigned long product
+@ Use __aeabi_uidivmod() and return remainder
 @
 	.thumb_func
-        .global __aeabi_lmul
-__aeabi_lmul:
-	
-	mul	r1, r2
-	mul	r3, r0
-	adds	r1, r3
-	lsrs	r3, r0, #16
-	mul	r3, r2
-	lsrs	r3, #16
-	adds	r1, r3
-	lsrs	r3, r2, #16
-	mul	r3, r0
-	lsrs	r3, #16
-	adds	r1, r3
-	mul	r0, r2
-	bx	lr
+        .global __umodsi3
+__umodsi3:
+	push	{lr}
+	bl	__aeabi_uidivmod
+	mov	r0, r1
+	pop	{pc}

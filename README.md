@@ -22,10 +22,10 @@ LLVM.
 
 ~~~~
 __muldi3()
-__umodsi3():
-__udivsi3():
-__umoddi3():
-__udivdi3():
+__umodsi3()
+__udivsi3()
+__umoddi3()
+__udivdi3()
 ~~~~
 
 
