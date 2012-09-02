@@ -27,7 +27,7 @@
 
 @ unsigned  __udivsi3(unsigned num, unsigned denom)
 @
-@ Just an alias for __aeabi_uldivmod(), the remainder is ignored
+@ libgcc wrapper: just an alias for __aeabi_uldivmod(), the remainder is ignored
 @
 	.thumb_func
         .global __udivsi3

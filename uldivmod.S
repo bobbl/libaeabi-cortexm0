@@ -12,10 +12,9 @@
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+ * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 
 
 
@@ -26,31 +25,9 @@
 
 
 
-
-@ libgcc wrapper functions
-@ Ironically they are not needed for gcc, which uses the aeabi functions,
-@ but for LLVM
-
-
-
-
-@ unsigned long long __umoddi3(unsigned long long num, unsigned long long denom)
-@
-	.thumb_func
-        .global __umoddi3
-__umoddi3:
-	push	{lr}
-	bl	__aeabi_uldivmod
-	mov	r0, r2
-	mov	r1, r3
-	pop	{pc}
-
-
-
-
 @ unsigned long long __udivdi3(unsigned long long num, unsigned long long denom)
 @
-@ just an alias for __aeabi_uldivmod(), the remainder is ignored
+@ libgcc wrapper: just an alias for __aeabi_uldivmod(), the remainder is ignored
 @
 	.thumb_func
         .global __udivdi3
@@ -58,25 +35,11 @@ __udivdi3:
 
 
 
-
-@ unsigned long long __aeabi_uldiv(unsigned long long num, unsigned long long denom)
+@ {unsigned quotient[r1:r0], unsigned remainder[r3:r2]}
+@  __aeabi_uldivmod(unsigned numerator[r1:r0], unsigned denominator[r3:r2])
 @
-@ just an alias for __aeabi_uldivmod(), the remainder is ignored
-@
-	.thumb_func
-        .global __aeabi_uldiv
-__aeabi_uldiv:
-
-
-
-
-
-@ __aeabi_uldivmod()
-@
-@ Input:  r1:r0 = numerator
-@         r3:r2 = denominator
-@ Output: r1:r0 = quotient
-@         r3:r2 = remainder
+@ Divide r1:r0 by r3:r2 and return the quotient in r1:r0 and the remainder
+@ in r3:r2
 @
 	.thumb_func
         .global __aeabi_uldivmod

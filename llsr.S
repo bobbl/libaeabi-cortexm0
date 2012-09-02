@@ -1,5 +1,5 @@
 /* Runtime ABI for the ARM Cortex-M0  
- * uldivmod.S: unsigned 64 bit division
+ * llsr.S: 64 bit logical shift right
  *
  * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
@@ -24,15 +24,39 @@
 	.cpu cortex-m0
 
 
-@ unsigned long long __umoddi3(unsigned long long num, unsigned long long denom)
+
+@ long long __lshrdi3(long long r1:r0, int r2)
 @
-@ libgcc wrapper: use __aeabi_uldivmod() and return remainder
+@ libgcc wrapper: just an alias for __aeabi_llsr()
 @
 	.thumb_func
-        .global __umoddi3
-__umoddi3:
-	push	{lr}
-	bl	__aeabi_uldivmod
-	mov	r0, r2
-	mov	r1, r3
-	pop	{pc}
+        .global __lshrdi3
+__lshrdi3:
+
+
+
+@ long long __aeabi_llsr(long long r1:r0, int r2)
+@
+@ Logical shift r1:r0 right by r2 bits
+@
+	.thumb_func
+        .global __aeabi_llsr
+__aeabi_llsr:
+	
+	cmp	r2, #31
+	bhi	1f
+	
+	movs	r3, r1		@ n < 32:
+	lsrs	r0, r2
+	lsrs	r1, r2		@ hi = hi >> n
+	mvns	r2, r2
+	adds	r2, #32
+	lsls	r3, r2
+	orrs	r0, r3		@ lo = lo >> n | hi << (32-n)
+	bx	lr
+
+1:	subs	r2, #32		@ n >= 32:
+	movs	r0, r1
+	lsrs	r0, r2		@ lo = hi >> (n-32)
+	mov	r1, #0		@ hi = 0
+	bx	lr

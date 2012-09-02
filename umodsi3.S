@@ -27,7 +27,7 @@
 
 @ unsigned __umodsi3(unsigned num, unsigned denom)
 @
-@ Use __aeabi_uidivmod() and return remainder
+@ libgcc wrapper: use __aeabi_uidivmod() and return remainder
 @
 	.thumb_func
         .global __umodsi3
