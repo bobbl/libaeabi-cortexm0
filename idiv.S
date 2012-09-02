@@ -1,5 +1,5 @@
 /* Runtime ABI for the ARM Cortex-M0  
- * llsr.S: 64 bit logical shift right
+ * idiv.S: signed 32 bit division (only quotient)
  *
  * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
  *
@@ -25,38 +25,43 @@
 
 
 
-@ long long __lshrdi3(long long r1:r0, int r2)
+@ int __divsi3(int num, int denom)
 @
-@ libgcc wrapper: just an alias for __aeabi_llsr()
-@
-	.thumb_func
-        .global __lshrdi3
-__lshrdi3:
-
-
-
-@ long long __aeabi_llsr(long long r1:r0, int r2)
-@
-@ Logical shift r1:r0 right by r2 bits
+@ libgcc wrapper: just an alias for __aeabi_idivmod(), the remainder is ignored
 @
 	.thumb_func
-        .global __aeabi_llsr
-__aeabi_llsr:
-	
-	cmp	r2, #31
-	bhi	1f
-	
-	movs	r3, r1		@ n < 32:
-	lsrs	r0, r2
-	lsrs	r1, r2		@ hi = hi >> n
-	rsbs	r2, r2, #0
-	adds	r2, #32
-	lsls	r3, r2
-	orrs	r0, r3		@ lo = lo >> n | hi << (32-n)
-	bx	lr
+        .global __divsi3
+__divsi3:
 
-1:	subs	r2, #32		@ n >= 32:
-	movs	r0, r1
-	lsrs	r0, r2		@ lo = hi >> (n-32)
-	mov	r1, #0		@ hi = 0
-	bx	lr
+
+
+@ int __aeabi_idiv(int num, int denom)
+@
+@ Just an alias for __aeabi_uidivmod(), the remainder is ignored
+@
+	.thumb_func
+        .global __aeabi_idiv
+__aeabi_idiv:
+
+	cmp	r0, #0
+	bge	L_num_pos
+	
+	rsbs	r0, r0, #0		@ num = -num
+
+	cmp	r1, #0
+	bge	L_neg_result
+	
+	rsbs	r1, r1, #0		@ den = -den
+	b	__aeabi_uidivmod
+	
+L_num_pos:
+	cmp	r1, #0
+	bge	__aeabi_uidivmod
+
+	rsbs	r1, r1, #0		@ den = -den
+
+L_neg_result:
+	push	{lr}
+	bl	__aeabi_uidivmod
+	rsbs	r0, r0, #0		@ quot = -quot
+	pop	{pc}

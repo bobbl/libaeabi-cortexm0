@@ -15,7 +15,9 @@ __aeabi_uldivmod()
 __aeabi_llsl()
 __aeabi_llsr()
 __aeabi_lasr()
+__aeabi_idiv()
 __aeabi_uidiv()
+__aeabi_idivmod()
 __aeabi_uidivmod()
 ~~~~
 
@@ -32,6 +34,8 @@ __udivdi3()
 __ashldi3()
 __lshrdi3()
 __ashrdi3()
+__modsi3()
+__divsi3()
 __umodsi3()
 __udivsi3()
 ~~~~

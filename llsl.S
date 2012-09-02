@@ -49,7 +49,7 @@ __aeabi_llsl:
 	movs	r3, r1		@ n < 32:
 	lsls	r0, r2		@ lo = lo << n
 	lsls	r1, r2
-	mvns	r2, r2
+	rsbs	r2, r2, #0
 	adds	r2, #32
 	lsrs	r3, r2
 	orrs	r1, r3		@ hi = hi << n | lo >> (32-n)
