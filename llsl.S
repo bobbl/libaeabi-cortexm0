@@ -58,5 +58,5 @@ __aeabi_llsl:
 1:	subs	r2, #32		@ n >= 32:
 	movs	r1, r0
 	lsls	r1, r2		@ hi = lo << (n-32)
-	mov	r0, #0		@ lo = 0
+	movs	r0, #0		@ lo = 0
 	bx	lr

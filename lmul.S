@@ -44,16 +44,16 @@ __muldi3:
         .global __aeabi_lmul
 __aeabi_lmul:
 	
-	mul	r1, r2
-	mul	r3, r0
+	muls	r1, r2
+	muls	r3, r0
 	adds	r1, r3
 	lsrs	r3, r0, #16
-	mul	r3, r2
+	muls	r3, r2
 	lsrs	r3, #16
 	adds	r1, r3
 	lsrs	r3, r2, #16
-	mul	r3, r0
+	muls	r3, r0
 	lsrs	r3, #16
 	adds	r1, r3
-	mul	r0, r2
+	muls	r0, r2
 	bx	lr

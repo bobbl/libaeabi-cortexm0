@@ -39,7 +39,7 @@ __aeabi_ldivmod:
 	bge	L_num_pos
 	
 	push	{r4, lr}
-	mov	r4, #0			@ num = -num
+	movs	r4, #0			@ num = -num
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
 	mov	r1, r4
@@ -47,12 +47,12 @@ __aeabi_ldivmod:
 	cmp	r3, #0
 	bge	L_neg_both
 	
-	mov	r4, #0			@ den = -den
+	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
 	bl	__aeabi_uldivmod
-	mov	r4, #0			@ rem = -rem
+	movs	r4, #0			@ rem = -rem
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
@@ -60,11 +60,11 @@ __aeabi_ldivmod:
 	
 L_neg_both:
 	bl	__aeabi_uidivmod
-	mov	r4, #0			@ quot = -quot
+	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
 	mov	r1, r4
-	mov	r4, #0			@ rem = -rem
+	movs	r4, #0			@ rem = -rem
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
@@ -75,12 +75,12 @@ L_num_pos:
 	bge	__aeabi_uidivmod
 
 	push	{r4, lr}
-	mov	r4, #0			@ den = -den
+	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
 	bl	__aeabi_uidivmod
-	mov	r4, #0			@ quot = -quot
+	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
 	mov	r1, r4

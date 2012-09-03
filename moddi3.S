@@ -39,7 +39,7 @@ __aeabi_ldivmod:
 	cmp	r3, #0
 	bge	L_dont_neg_den
 	
-	mov	r4, #0			@ den = -den
+	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
@@ -48,20 +48,20 @@ L_dont_neg_den:
 	cmp	r1, #0
 	bge	L_pos_result
 	
-	mov	r4, #0			@ num = -num
+	movs	r4, #0			@ num = -num
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
 	mov	r1, r4
 
 	bl	__aeabi_uidivmod
-	mov	r0, #0			@ rem = -rem
-	mov	r1, #0
+	movs	r0, #0			@ rem = -rem
+	movs	r1, #0
 	subs	r0, r2
 	sbcs	r1, r3
 	pop	{r4, pc}
 
 L_pos_result:
 	bl	__aeabi_uidivmod
-	movs	r1, r3
-	movs	r0, r2
+	mov	r1, r3
+	mov	r0, r2
 	pop	{r4, pc}

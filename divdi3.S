@@ -38,7 +38,7 @@ __divdi3:
 	bge	L_num_pos
 	
 	push	{r4, lr}
-	mov	r4, #0			@ num = -num
+	movs	r4, #0			@ num = -num
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
 	mov	r1, r4
@@ -46,7 +46,7 @@ __divdi3:
 	cmp	r3, #0
 	bge	L_neg_result
 	
-	mov	r4, #0			@ den = -den
+	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
@@ -58,14 +58,14 @@ L_num_pos:
 	bge	__aeabi_uidivmod
 
 	push	{r4, lr}
-	mov	r4, #0			@ den = -den
+	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
 
 L_neg_result:
 	bl	__aeabi_uidivmod
-	mov	r4, #0			@ quot = -quot
+	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
 	mov	r1, r4

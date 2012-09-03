@@ -46,8 +46,8 @@ L_dont_neg_den:
 	rsbs	r0, r0, #0		@ num = -num
 	push	{lr}
 	bl	__aeabi_uidivmod
-	mov	r0, #0			@ return -rem
-	rsub	r0, r1
+	movs	r0, #0			@ return -rem
+	subs	r0, r1
 	pop	{pc}
 	
 L_pos_result:
