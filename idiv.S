@@ -37,7 +37,7 @@ __divsi3:
 
 @ int __aeabi_idiv(int num:r0, int denom:r1)
 @
-@ Divide r0 by r0 and return quotient in r0 (all signed).
+@ Divide r0 by r1 and return quotient in r0 (all signed).
 @ Use __aeabi_uidivmod() but check signs before and change signs afterwards.
 @
 	.thumb_func

@@ -54,7 +54,7 @@ __divdi3:
 	pop	{r4, pc}
 	
 L_num_pos:
-	cmp	r1, #0
+	cmp	r3, #0
 	bge	__aeabi_uldivmod
 
 	push	{r4, lr}

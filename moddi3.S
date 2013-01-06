@@ -53,7 +53,7 @@ L_dont_neg_den:
 	sbcs	r4, r1
 	mov	r1, r4
 
-	bl	__aeabi_uidivmod
+	bl	__aeabi_uldivmod
 	movs	r0, #0			@ rem = -rem
 	movs	r1, #0
 	subs	r0, r2
@@ -61,7 +61,7 @@ L_dont_neg_den:
 	pop	{r4, pc}
 
 L_pos_result:
-	bl	__aeabi_uidivmod
+	bl	__aeabi_uldivmod
 	mov	r1, r3
 	mov	r0, r2
 	pop	{r4, pc}

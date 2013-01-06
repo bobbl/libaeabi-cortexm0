@@ -59,7 +59,7 @@ __aeabi_ldivmod:
 	pop	{r4, pc}
 	
 L_neg_both:
-	bl	__aeabi_uidivmod
+	bl	__aeabi_uldivmod
 	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
@@ -71,15 +71,15 @@ L_neg_both:
 	pop	{r4, pc}
 
 L_num_pos:
-	cmp	r1, #0
-	bge	__aeabi_uidivmod
+	cmp	r3, #0
+	bge	__aeabi_uldivmod
 
 	push	{r4, lr}
 	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
 	mov	r3, r4
-	bl	__aeabi_uidivmod
+	bl	__aeabi_uldivmod
 	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
 	sbcs	r4, r1
