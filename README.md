@@ -20,6 +20,12 @@ __aeabi_idiv()
 __aeabi_uidiv()
 __aeabi_idivmod()
 __aeabi_uidivmod()
+__aeabi_memset8()
+__aeabi_memset4()
+__aeabi_memset()
+__aeabi_memclr8()
+__aeabi_memclr4()
+__aeabi_memclr()
 ~~~~
 
 
