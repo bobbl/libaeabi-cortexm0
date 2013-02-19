@@ -55,7 +55,35 @@ Building a compiler that uses the runtime library
 
 ### binutils
 
+Install binutils to the directory $TARGETDIR. The sourcecode can be downloaded
+from ftp://ftp.gnu.org/gnu/binutils/
+
+~~~~
+$ tar xf binutils-2.23.1.tar.bz2
+$ mkdir btmp
+$ cd btmp
+$ ../binutils-2.23.1/configure --target=arm-none-eabi --prefix=$TARGETDIR \
+    --disable-interwork --disable-multibib --disable-nls --disable-libssp
+$ make
+$ sudo make install
+$ export PATH=$PATH:$TARGETDIR/bin
+~~~~
+
 ### GNU C
+
+The GNU C compiler can be installed to the same directory $TARGETDIR. The
+sourcecode can be downloaded from ftp://ftp.gnu.org/gnu/gcc/
+
+~~~~
+$ tar xf gcc-4.7.2.tar.bz2
+$ mkdir gtmp
+$ cd gtmp
+$ ../gcc-4.7.2/configure --target=arm-none-eabi --prefix=$TARGETDIR \
+    --disable-interwork --disable-multibib --disable-nls --disable-libssp \
+    --enable-languages="c" --with-float="soft"
+$ make
+$ sudo make install
+~~~~
 
 ### clang / LLVM
 
