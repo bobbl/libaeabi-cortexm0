@@ -1,7 +1,7 @@
 /* Runtime ABI for the ARM Cortex-M0  
  * lmul.S: 64 bit multiplication
  *
- * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
+ * Copyright (c) 2013 Jörg Mische <bobbl@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -44,31 +44,31 @@ __muldi3:
         .global __aeabi_lmul
 __aeabi_lmul:
 
-	push	{r4, r5, lr}
+	push	{r4, lr}
 	muls	r1, r2
 	muls	r3, r0
 	adds	r1, r3
 	
 	lsrs	r3, r0, #16
 	lsrs	r4, r2, #16
+	muls	r3, r4
+	adds	r1, r3
+
+	lsrs	r3, r0, #16
 	uxth	r0, r0
 	uxth	r2, r2
-
-	movs	r5, r3
-	muls	r5, r4
-	adds	r1, r5
-	
 	muls	r3, r2
 	muls	r4, r0
 	muls	r0, r2
+	
 	movs	r2, #0
 	adds	r3, r4
 	adcs	r2, r2
-	
-	lsls	r4, r3, #16
-	lsrs	r3, #16
 	lsls	r2, #16
 	adds	r1, r2
-	adds	r0, r4
-	adds	r1, r3
-	pop	{r4, r5, pc}
+	
+	lsls	r2, r3, #16
+	lsrs	r3, #16
+	adds	r0, r2
+	adcs	r1, r3
+	pop	{r4, pc}
