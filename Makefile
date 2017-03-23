@@ -1,4 +1,5 @@
 AS=arm-none-eabi-as -mthumb
+AR=arm-none-eabi-ar
 
 SRC_FILES=$(wildcard *.S) 
 
@@ -6,7 +7,7 @@ SRC_FILES=$(wildcard *.S)
 	$(AS) $< -o $@
 
 libaeabi-cortexm0.a: $(SRC_FILES:%.S=%.o)
-	ar rcs libaeabi-cortexm0.a $(SRC_FILES:%.S=%.o)
+	$(AR) rcs libaeabi-cortexm0.a $(SRC_FILES:%.S=%.o)
 
 
 
