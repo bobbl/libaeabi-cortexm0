@@ -84,8 +84,12 @@ L_upper_result:
 	mov	r3, r1
 	mov	r2, r0
 	movs	r1, #0		@ upper result = 0
+	b	L_sub_entry1
 
-L_sub_loop1:	
+L_sub_loop1:
+	lsrs	r7, #1		@ denom(r7:r6) >>= 1
+
+L_sub_entry1:
 	cmp	r3, r7
 	bcc	L_dont_sub1	@ if (num>denom)
 
@@ -93,13 +97,13 @@ L_sub_loop1:
 	orrs	r1, r5		@ result(r7:r6) |= bitmask(r5)
 L_dont_sub1:
 
-	lsrs	r7, #1		@ denom(r7:r6) >>= 1
 	lsrs	r5, #1		@ bitmask(r5) >>= 1
 	bne	L_sub_loop1
-	
+
 	movs	r5, #1
 	lsls	r5, #31
-	movs	r6, #0
+	lsls	r6, r7, #31	@ denom(r7:r6) = (r7:0) >> 1
+	lsrs	r7, #1		@ dont forget least significant bit!
 	b	L_lower_result
 
 
