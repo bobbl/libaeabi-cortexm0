@@ -32,8 +32,8 @@
 @ remainder to r1:r0.
 @
 	.thumb_func
-        .global __aeabi_ldivmod
-__aeabi_ldivmod:
+        .global __moddi3
+__moddi3:
 
 	push	{r4, lr}
 	cmp	r3, #0
