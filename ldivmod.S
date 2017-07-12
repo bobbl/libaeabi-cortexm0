@@ -1,5 +1,5 @@
 /* Runtime ABI for the ARM Cortex-M0  
- * ldivmod.S: signed 64 bit division (quotient and remainder)
+ * ldivmod.S: 64 bit division (quotient and remainder)
  *
  * Copyright (c) 2012-2017 Jörg Mische <bobbl@gmx.de>
  *
@@ -36,7 +36,7 @@
 __aeabi_ldivmod:
 
 	cmp	r1, #0
-	bge	L_num_pos
+	bge	.L_num_pos
 	
 	push	{r4, lr}
 	movs	r4, #0			@ num = -num
@@ -45,7 +45,7 @@ __aeabi_ldivmod:
 	mov	r1, r4
 
 	cmp	r3, #0
-	bge	L_neg_both
+	bge	.L_neg_both
 	
 	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
@@ -58,7 +58,7 @@ __aeabi_ldivmod:
 	mov	r3, r4
 	pop	{r4, pc}
 	
-L_neg_both:
+.L_neg_both:
 	bl	__aeabi_uldivmod
 	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
@@ -70,7 +70,7 @@ L_neg_both:
 	mov	r3, r4
 	pop	{r4, pc}
 
-L_num_pos:
+.L_num_pos:
 	cmp	r3, #0
 	bge	__aeabi_uldivmod
 
@@ -110,11 +110,11 @@ __udivdi3:
 __aeabi_uldivmod:
 	
 	cmp	r3, #0
-	bne	L_large_denom
+	bne	.L_large_denom
 	cmp	r2, #0
-	beq	L_divison_by_0
+	beq	.L_divison_by_0
 	cmp	r1, #0
-	beq	L_fallback_32bits
+	beq	.L_fallback_32bits
 
 
 
@@ -133,49 +133,49 @@ __aeabi_uldivmod:
 
 	movs	r5, #1		@ bitmask
 	adds	r7, r2, #0	@ dont shift if denominator would overflow
-	bmi	L_upper_result
+	bmi	.L_upper_result
 	cmp	r1, r7
-	blo	L_upper_result
+	blo	.L_upper_result
 	
-L_denom_shift_loop1:
+.L_denom_shift_loop1:
 	lsls	r5, #1
 	lsls	r7, #1
-	bmi	L_upper_result	@ dont shift if overflow
+	bmi	.L_upper_result	@ dont shift if overflow
 	cmp	r1, r7
-	bhs	L_denom_shift_loop1
+	bhs	.L_denom_shift_loop1
 	
-L_upper_result:
+.L_upper_result:
 	mov	r3, r1
 	mov	r2, r0
 	movs	r1, #0		@ upper result = 0
-	b	L_sub_entry1
+	b	.L_sub_entry1
 
-L_sub_loop1:
+.L_sub_loop1:
 	lsrs	r7, #1		@ denom(r7:r6) >>= 1
 
-L_sub_entry1:
+.L_sub_entry1:
 	cmp	r3, r7
-	bcc	L_dont_sub1	@ if (num>denom)
+	bcc	.L_dont_sub1	@ if (num>denom)
 
 	subs	r3, r7		@ num -= denom
 	orrs	r1, r5		@ result(r7:r6) |= bitmask(r5)
-L_dont_sub1:
+.L_dont_sub1:
 
 	lsrs	r5, #1		@ bitmask(r5) >>= 1
-	bne	L_sub_loop1
+	bne	.L_sub_loop1
 
 	movs	r5, #1
 	lsls	r5, #31
 	lsls	r6, r7, #31	@ denom(r7:r6) = (r7:0) >> 1
 	lsrs	r7, #1		@ dont forget least significant bit!
-	b	L_lower_result
+	b	.L_lower_result
 
 
 
 	@ case 2: division by 0
 	@ call __aeabi_ldiv0
 	
-L_divison_by_0:
+.L_divison_by_0:
 	b	__aeabi_ldiv0
 
 
@@ -183,7 +183,7 @@ L_divison_by_0:
 	@ case 3: num < 2^32 and denom < 2^32
 	@ fallback to 32 bit division
 
-L_fallback_32bits:
+.L_fallback_32bits:
 	mov	r1, r2
 	push	{lr}
 	bl	__aeabi_uidivmod
@@ -197,7 +197,7 @@ L_fallback_32bits:
 	@ case 4: denom >= 2^32
 	@ result is smaller than 2^32
 	
-L_large_denom:
+.L_large_denom:
 	push	{r4, r5, r6, r7, lr}
 
 	mov	r7, r3
@@ -210,40 +210,40 @@ L_large_denom:
 	movs	r1, #0		@ high word of result is 0
 	movs	r5, #1		@ bitmask
 	adds	r7, #0		@ dont shift if denominator would overflow
-	bmi	L_lower_result
+	bmi	.L_lower_result
 	cmp	r3, r7
-	blo	L_lower_result
+	blo	.L_lower_result
 	
-L_denom_shift_loop4:
+.L_denom_shift_loop4:
 	lsls	r5, #1
 	lsls	r7, #1
 	lsls	r6, #1
 	adcs	r7, r1		@ r1=0
-	bmi	L_lower_result	@ dont shift if overflow
+	bmi	.L_lower_result	@ dont shift if overflow
 	cmp	r3, r7
-	bhs	L_denom_shift_loop4
+	bhs	.L_denom_shift_loop4
 
 
 
-L_lower_result:
+.L_lower_result:
 	movs	r0, #0
 	
-L_sub_loop4:
+.L_sub_loop4:
 	mov	r4, r3
 	cmp	r2, r6
 	sbcs	r4, r7
-	bcc	L_dont_sub4	@ if (num>denom)
+	bcc	.L_dont_sub4	@ if (num>denom)
 
 	subs	r2, r6		@ numerator -= denom
 	sbcs	r3, r7
 	orrs	r0, r5		@ result(r1:r0) |= bitmask(r5)
-L_dont_sub4:
+.L_dont_sub4:
 
 	lsls	r4, r7, #31	@ denom(r7:r6) >>= 1
 	lsrs	r6, #1
 	lsrs	r7, #1
 	orrs	r6, r4
 	lsrs	r5, #1		@ bitmask(r5) >>= 1
-	bne	L_sub_loop4
+	bne	.L_sub_loop4
 
 	pop	{r4, r5, r6, r7, pc}
