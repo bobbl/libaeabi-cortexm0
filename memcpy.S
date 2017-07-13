@@ -1,7 +1,7 @@
 /* Runtime ABI for the ARM Cortex-M0  
  * memcpy.S: copy memory region
  *
- * Copyright (c) 2014 Mario Werner <nioshd@gmail.com>
+ * Copyright (c) 2014-2017 Mario Werner <nioshd@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,21 +16,36 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-
 .syntax unified
 .text
 .thumb
 .cpu cortex-m0
 
+@ void __aeabi_memcpy8(void *r0, const void *r1, size_t r2)
+@
+@ Copy r2 bytes from *r1 to *r0.
+@ r0 and r1 must be 8-byte-aligned
+@
+.thumb_func
+.global __aeabi_memcpy8
+__aeabi_memcpy8:
+
+@ void __aeabi_memcpy4(void *r0, const void *r1, size_t r2)
+@
+@ Copy r2 bytes from *r1 to *r0.
+@ r0 and r1 must be 4-byte-aligned
+@
+.thumb_func
+.global __aeabi_memcpy4
+__aeabi_memcpy4:
+
 @ void __aeabi_memcpy(void *r0, const void *r1, size_t r2)
 @
-@ Copy the r2 bytes from with *r1 to *r0.
+@ Copy r2 bytes from *r1 to *r0.
 @
 .thumb_func
 .global __aeabi_memcpy
 __aeabi_memcpy:
-
 
 L_head:
   cmp r2, #0

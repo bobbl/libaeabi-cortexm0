@@ -26,6 +26,9 @@ __aeabi_memset()
 __aeabi_memclr8()
 __aeabi_memclr4()
 __aeabi_memclr()
+__aeabi_memcpy8()
+__aeabi_memcpy4()
+__aeabi_memcpy()
 ~~~~
 
 
