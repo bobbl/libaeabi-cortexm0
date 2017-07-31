@@ -36,8 +36,8 @@
 __aeabi_ldivmod:
 
 	cmp	r1, #0
-	bge	.L_num_pos
-	
+	bge	.Lnumerator_pos
+
 	push	{r4, lr}
 	movs	r4, #0			@ num = -num
 	rsbs	r0, r0, #0
@@ -45,8 +45,8 @@ __aeabi_ldivmod:
 	mov	r1, r4
 
 	cmp	r3, #0
-	bge	.L_neg_both
-	
+	bge	.Lboth_neg
+
 	movs	r4, #0			@ den = -den
 	rsbs	r2, r2, #0
 	sbcs	r4, r3
@@ -58,7 +58,7 @@ __aeabi_ldivmod:
 	mov	r3, r4
 	pop	{r4, pc}
 	
-.L_neg_both:
+.Lboth_neg:
 	bl	__aeabi_uldivmod
 	movs	r4, #0			@ quot = -quot
 	rsbs	r0, r0, #0
@@ -70,9 +70,9 @@ __aeabi_ldivmod:
 	mov	r3, r4
 	pop	{r4, pc}
 
-.L_num_pos:
+.Lnumerator_pos:
 	cmp	r3, #0
-	bge	__aeabi_uldivmod
+	bge	.Luldivmod
 
 	push	{r4, lr}
 	movs	r4, #0			@ den = -den
@@ -108,7 +108,10 @@ __udivdi3:
 	.thumb_func
         .global __aeabi_uldivmod
 __aeabi_uldivmod:
-	
+
+
+
+.Luldivmod:
 	cmp	r3, #0
 	bne	.L_large_denom
 	cmp	r2, #0
@@ -136,14 +139,14 @@ __aeabi_uldivmod:
 	bmi	.L_upper_result
 	cmp	r1, r7
 	blo	.L_upper_result
-	
+
 .L_denom_shift_loop1:
 	lsls	r5, #1
 	lsls	r7, #1
 	bmi	.L_upper_result	@ dont shift if overflow
 	cmp	r1, r7
 	bhs	.L_denom_shift_loop1
-	
+
 .L_upper_result:
 	mov	r3, r1
 	mov	r2, r0
@@ -174,7 +177,7 @@ __aeabi_uldivmod:
 
 	@ case 2: division by 0
 	@ call __aeabi_ldiv0
-	
+
 .L_divison_by_0:
 	b	__aeabi_ldiv0
 
@@ -196,7 +199,7 @@ __aeabi_uldivmod:
 
 	@ case 4: denom >= 2^32
 	@ result is smaller than 2^32
-	
+
 .L_large_denom:
 	push	{r4, r5, r6, r7, lr}
 
@@ -213,7 +216,7 @@ __aeabi_uldivmod:
 	bmi	.L_lower_result
 	cmp	r3, r7
 	blo	.L_lower_result
-	
+
 .L_denom_shift_loop4:
 	lsls	r5, #1
 	lsls	r7, #1
@@ -226,8 +229,8 @@ __aeabi_uldivmod:
 
 
 .L_lower_result:
-	movs	r0, #0
-	
+	eors	r0, r0
+
 .L_sub_loop4:
 	mov	r4, r3
 	cmp	r2, r6

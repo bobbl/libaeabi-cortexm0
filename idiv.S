@@ -1,7 +1,7 @@
 /* Runtime ABI for the ARM Cortex-M0  
  * idiv.S: signed 32 bit division (only quotient)
  *
- * Copyright (c) 2012 Jörg Mische <bobbl@gmx.de>
+ * Copyright (c) 2012-2017 Jörg Mische <bobbl@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -45,23 +45,21 @@ __divsi3:
 __aeabi_idiv:
 
 	cmp	r0, #0
-	bge	L_num_pos
-	
+	bge	.Lnumerator_pos
 	rsbs	r0, r0, #0		@ num = -num
-
 	cmp	r1, #0
-	bge	L_neg_result
-	
+	bge	.Lneg_result
 	rsbs	r1, r1, #0		@ den = -den
+
+.Luidivmod:
 	b	__aeabi_uidivmod
-	
-L_num_pos:
-	cmp	r1, #0
-	bge	__aeabi_uidivmod
 
+.Lnumerator_pos:
+	cmp	r1, #0
+	bge	.Luidivmod
 	rsbs	r1, r1, #0		@ den = -den
 
-L_neg_result:
+.Lneg_result:
 	push	{lr}
 	bl	__aeabi_uidivmod
 	rsbs	r0, r0, #0		@ quot = -quot
