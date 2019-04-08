@@ -35,13 +35,13 @@ __ashrdi3:
 
 
 
-@ long long __aeabi_llsr(long long r1:r0, int r2)
+@ long long __aeabi_lasr(long long r1:r0, int r2)
 @
-@ Logicall shift r1:r0 right by r2 bits
+@ Arithmetic shift r1:r0 right by r2 bits
 @
 	.thumb_func
-        .global __aeabi_llsr
-__aeabi_llsr:
+        .global __aeabi_lasr
+__aeabi_lasr:
 	
 	cmp	r2, #31
 	bhi	1f
