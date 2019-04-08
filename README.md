@@ -1,9 +1,9 @@
 ARM Run-Time ABI for the Cortex-M0 processor
 ============================================
 
-This library implements the Run-Time ABI for the ARM architecture as defined
-in document ARM IHI 0043C (http://infocenter.arm.com) for the Thumb-2 ISA
-subset of the Cortex-M0.
+This library implements the Run-time ABI for the ARM architecture as defined in
+document [ARM IHI 0043C](infocenter.arm.com/help/topic/com.arm.doc.ihi0043d/IHI0043D_rtabi.pdf)
+for the Thumb-2 ISA subset of the Cortex-M0.
 
 
 So Far Implemented
@@ -43,8 +43,8 @@ __aeabi_memclr()
 
 Additional libgcc wrapper functions
 -----------------------------------
-Ironically they are not needed for gcc, which uses the aeabi functions, but for
-LLVM.
+Older LLVM versions required them, now LLVM also uses the ARM EABI, therefore
+these wrappers will be removed soon.
 
 ~~~~
 __muldi3()
@@ -62,42 +62,23 @@ __udivsi3()
 ~~~~
 
 
-Building a compiler that uses the runtime library
--------------------------------------------------
 
-### binutils
+Cross compiling
+---------------
 
-Install binutils to the directory $TARGETDIR. The sourcecode can be downloaded
-from ftp://ftp.gnu.org/gnu/binutils/
+### GNU binutils / gcc
 
-~~~~
-$ tar xf binutils-2.23.1.tar.bz2
-$ mkdir btmp
-$ cd btmp
-$ ../binutils-2.23.1/configure --target=arm-none-eabi --prefix=$TARGETDIR \
-    --disable-interwork --disable-multibib --disable-nls --disable-libssp
-$ make
-$ sudo make install
-$ export PATH=$PATH:$TARGETDIR/bin
-~~~~
+Ubuntu provides the package `gcc-arm-none-eabi` with the ARM cross compiler
+based on gcc. To cross compile for the ARM Cortex-M0 use
 
-### GNU C
-
-The GNU C compiler can be installed to the same directory $TARGETDIR. The
-sourcecode can be downloaded from ftp://ftp.gnu.org/gnu/gcc/
-
-~~~~
-$ tar xf gcc-4.7.2.tar.bz2
-$ mkdir gtmp
-$ cd gtmp
-$ ../gcc-4.7.2/configure --target=arm-none-eabi --prefix=$TARGETDIR \
-    --disable-interwork --disable-multibib --disable-nls --disable-libssp \
-    --enable-languages="c" --with-float="soft"
-$ make
-$ sudo make install
-~~~~
+    arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -o foo.arm foo.c -nostdlib -laeabi-cortexm0
 
 ### clang / LLVM
+
+Clang is a native cross compiler, but the standard linker `/usr/bin/ld` is not
+able to link ARM binaries. Therefore use LLD (ubuntu package `lld-7`):
+
+    clang -target armv6m-none-eabi -fuse-ld=lld-7 -o foo.arm foo.c -nostdlib -laeabi-cortexm0
 
 
 License
