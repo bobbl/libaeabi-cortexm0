@@ -48,12 +48,12 @@ __aeabi_memmove4:
 
 
 	cmp	r0, r1
-	bls	.Lmemcpy4
+	bls	__aeabi_memcpy4
 	adds	r3, r1, r2
 	cmp	r0, r3
-	bhs	.Lmemcpy4
-	orrs	r2, r2
-	beq	.Lreturn
+	bhs	__aeabi_memcpy4
+
+	b	.Lbackward_entry
 
 .Lbackward_loop:
 	ldrb	r3, [r1, r2]
@@ -63,7 +63,6 @@ __aeabi_memmove4:
 	subs	r2, #1
 	bhs	.Lbackward_loop
 
-.Lreturn:
 	bx	lr
 
 
@@ -80,7 +79,7 @@ __aeabi_memmove:
 
 
 	cmp	r0, r1
-	bls	.Lmemcpy
+	bls	__aeabi_memcpy
 	adds	r3, r1, r2
 	cmp	r0, r3
 	blo	.Lbackward_entry
@@ -98,7 +97,6 @@ __aeabi_memcpy:
 
 
 
-.Lmemcpy:
 	cmp	r2, #8
 	blo	.Lforward1
 	mov	r3, r0
@@ -147,7 +145,6 @@ __aeabi_memcpy4:
 
 
 
-.Lmemcpy4:
 	subs	r2, #20
 	blo	.Lforward4
 	push	{r4, r5, r6, r7}
@@ -172,7 +169,7 @@ __aeabi_memcpy4:
 
 .Lforward1:
 	orrs	r2, r2
-	beq	.Lreturn
+	beq	9f
 	push	{r4}
 	eors	r4, r4
 
@@ -183,4 +180,4 @@ __aeabi_memcpy4:
 	cmp	r4, r2
 	blo	.Lforward1_loop
 	pop	{r4}
-	bx	lr
+9:	bx	lr
