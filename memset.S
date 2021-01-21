@@ -118,21 +118,21 @@ __aeabi_memset4:
 __aeabi_memset8:
 
 
-	subs	r1, #4
-	blo	L_last_3bytes
-	
 	lsls	r2, r2, #24	@ copy lowest byte of r2 to all other bytes in r2
 	lsrs	r3, r2, #8
 	orrs	r2, r3
 	lsrs	r3, r2, #16
 	orrs	r2, r3
-	
+
+	subs	r1, #4
+	blo	L_last_3bytes
+
 L_loop:
 	str	r2, [r0]
 	adds	r0, #4
 	subs	r1, #4
 	bhs	L_loop
-	
+
 L_last_3bytes:			@ r1 = remaining len - 4
 	adds	r1, #2
 	blo	L_one_left	@ branch if r1 was -4 or -3
