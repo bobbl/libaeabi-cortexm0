@@ -2,7 +2,7 @@ ARM Run-Time ABI for the Cortex-M0 processor
 ============================================
 
 This library implements the Run-time ABI for the ARM architecture as defined in
-document [ARM IHI 0043C](infocenter.arm.com/help/topic/com.arm.doc.ihi0043d/IHI0043D_rtabi.pdf)
+document [ARM IHI 0043](https://developer.arm.com/documentation/ihi0043/latest)
 for the Thumb-2 ISA subset of the Cortex-M0.
 
 
