@@ -1,0 +1,77 @@
+@ Runtime ABI for the ARM Cortex-M0
+@ nonan_fcmple.S: softfloat lower or equal comparison ignoring NaNs
+@
+@ Copyright Jörg Mische <bobbl@gmx.de>
+@
+@ Permission to use, copy, modify, and/or distribute this software for any
+@ purpose with or without fee is hereby granted, provided that the above
+@ copyright notice and this permission notice appear in all copies.
+@
+@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+@ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+@
+@ SPDX-License-Identifier: ISC
+
+
+
+        .syntax unified
+        .text
+        .thumb
+        .cpu cortex-m0
+
+
+
+@ int __aeabi_fcmpge(float r0, float r1)
+@
+@ Return 1 if r0>=r1 and no NaN, else 0
+@
+        .thumb_func
+        .global __aeabi_fcmpge
+__aeabi_fcmpge:
+
+        mov     r2, r0          @ swap r0 and r1
+        mov     r0, r1
+        mov     r1, r2
+        @ fallthrough to __aeabi_fcmple
+
+
+
+@ int __aeabi_fcmple(float r0, float r1)
+@
+@ Return 1 if r0<=r1 and no NaN, else 0
+@
+        .thumb_func
+        .global __aeabi_fcmple
+__aeabi_fcmple:
+
+        mov     r2, r0
+        eors    r2, r1
+        bpl     3f
+
+        @ opposite signs, therefore the positive one is larger
+
+        @ special case: +0 and -0 are equal
+        orrs    r2, r0          @ does not care if a|b or a|(a^b)
+        lsls    r2, #1
+        beq     5f              @ return 1
+
+        @ two cases: a positive and b negative or vice versa
+.Ltrue_if_b_lower_or_same:
+        cmp     r1, r0
+        bls     5f              @ return 1
+2:      movs    r0, #0
+        bx      lr
+
+3:      @ same sign
+        cmp     r0, #0
+        bmi     .Ltrue_if_b_lower_or_same
+
+        cmp     r0, r1
+        bhi     2b
+5:      movs    r0, #1
+        bx      lr
