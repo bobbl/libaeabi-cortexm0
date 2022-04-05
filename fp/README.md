@@ -29,16 +29,18 @@ returned. The unsigned branch instructions can be used to deal with the result:
 The other group of functions checks a certain relation: =, <, <=, >= > and
 returns true (1) or false (0) in r0.
 
-One group suffices two do all possible comparisons, therefore a compiler
-should normally only use one of the two groups. One the other hand, a trivial
-implementation of the single comparisons is a call to the flag delivering
-comparison and a branch that returns 0 or 1.
+One group suffices to do all possible comparisons. Therefore a compiler
+should normally only use one of the two groups.
 
-The implementation with NaN support uses this approach, because the NaN checks
-are quite expensive. In the non-NaN implementation, the single comparisons are
-standalone functions that do not depend on `__aeabi_cfcmple`. Nevertheless,
-the 3 flag-functions are provided to fulfil the standard requirements. But
-gcc for example won't directly use it and therefore they won't be linked.
+On the other hand, a trivial implementation of the single comparisons is a
+call to the flag delivering comparison and a branch that returns 0 or 1. The
+implementation with NaN support uses this trivial approach, because the NaN
+checks are quite expensive.
+
+In the non-NaN implementation, the single comparisons are standalone functions
+that do not depend on `__aeabi_cfcmple`. Nevertheless, the 3 flag-functions are
+provided to fulfil the standard requirements. But gcc for example does not
+directly use it and therefore they are not linked.
 
 The same applies to `__aeabi_fcmpun` which tests, if the arguments are NaNs.
 Although the function is needless if NaNs are not supported, it is provided
